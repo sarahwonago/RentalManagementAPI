@@ -5,12 +5,30 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import check_password
 
-from .serializers import UserSerializer, ChangePasswordSerializer, TenantRegistrationSerializer
+from .serializers import (UserSerializer, ChangePasswordSerializer, TenantRegistrationSerializer, LandlordRegistrationSerializer)
 from .permissions import IsLandLord, IsTenant
 
 User = get_user_model()
 
+class LandlordViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for registering landlords.
+    
+    All users registered via this endpoint will have the 'landlord' role.
+    """
+    queryset = User.objects.filter(role=User.LANDLORD)
+    serializer_class = LandlordRegistrationSerializer
 
+    def create(self, request, *args, **kwargs):
+        """
+        Register a landlord by creating a new user with 'landlord' role.
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    
 class TenantViewSet(viewsets.ModelViewSet):
     """
     Viewset for landlord to manage tenants.

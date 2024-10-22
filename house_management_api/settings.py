@@ -1,6 +1,7 @@
 
 from pathlib import Path
 from decouple import config
+from datetime import timedelta
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -31,11 +32,18 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     # Third party apps
+
+    # REST framework
     "rest_framework",
+    "rest_framework_simplejwt",
+    # documentation
+    "drf_spectacular",
 
     # Custom apps
     # user management
     "account.apps.AccountConfig",
+
+    
 
 
 ]
@@ -141,4 +149,29 @@ CACHES = {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }
     }
+}
+
+# REST Framework settings
+REST_FRAMEWORK = {
+
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+
+}
+
+# Simple JWT settings
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=10),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=10),
+}
+
+# settings.py
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Landlord-Tenant API',
+    'DESCRIPTION': 'API for landlords to manage tenants and houses.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
 }

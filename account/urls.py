@@ -1,10 +1,18 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from .views import TenantViewSet, ChangePasswordViewset
+from .views import TenantViewSet, ChangePasswordViewset, LandlordViewSet
 
 router = DefaultRouter()
 router.register(r"tenants", TenantViewSet, basename="tenant")
 router.register(r"change-password", ChangePasswordViewset, basename="change-password")
+router.register(r"landlord", LandlordViewSet, basename="landlord")
 
-urlpatterns = router.urls
+urlpatterns = [
+    path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+]
+
+
+urlpatterns += router.urls

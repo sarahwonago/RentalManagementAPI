@@ -4,6 +4,29 @@ from django.contrib.auth.password_validation import validate_password
 
 User = get_user_model()
 
+
+class LandlordRegistrationSerializer(serializers.ModelSerializer):
+    """
+    Serializer for landlord registration.
+    """
+    
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password']
+
+    def create(self, validated_data):
+        """
+        Create a landlord user.
+        """
+        password = validated_data.pop('password')
+        user = User.objects.create_user(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user
+
+
 class TenantRegistrationSerializer(serializers.ModelSerializer):
     """
     Serializer for tenant registration by a landlord.
