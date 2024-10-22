@@ -17,11 +17,12 @@ class CustomUser(AbstractUser):
         ("landlord", "landlord"),
         ("tenant", "tenant"),
         ("user", "user"),
+        ("superadmin", "superadmin")
         
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    phone_number = models.CharField(max_length=15, blank=True, null=True, unique=True)
     role = models.CharField(
         max_length=10, 
         choices=ROLE_CHOICES, 

@@ -9,20 +9,21 @@ class LandlordRegistrationSerializer(serializers.ModelSerializer):
     """
     Serializer for landlord registration.
     """
-    
-    password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password']
+        fields = ['id','username', 'email']
 
     def create(self, validated_data):
         """
         Create a landlord user.
         """
-        password = validated_data.pop('password')
-        user = User.objects.create_user(**validated_data)
-        user.set_password(password)
+
+        # Default password for landlord users.
+        default_password = "Lpassword123!"
+        #password = validated_data.pop('password')
+        user = User.objects.create_user(**validated_data, role=User.LANDLORD)
+        user.set_password(default_password)
         user.save()
         return user
 

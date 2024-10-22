@@ -5,19 +5,22 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import check_password
 
+from drf_spectacular.utils import extend_schema, extend_schema_view
+
 from .serializers import (UserSerializer, ChangePasswordSerializer, TenantRegistrationSerializer, LandlordRegistrationSerializer)
-from .permissions import IsLandLord, IsTenant
+from .permissions import IsLandLord, IsTenant, IsSuperAdmin
 
 User = get_user_model()
 
 class LandlordViewSet(viewsets.ModelViewSet):
     """
-    ViewSet for registering landlords.
+    ViewSet for registering1 landlords.
     
     All users registered via this endpoint will have the 'landlord' role.
     """
     queryset = User.objects.filter(role=User.LANDLORD)
     serializer_class = LandlordRegistrationSerializer
+    #permission_classes = [IsAuthenticated, IsSuperAdmin]
 
     def create(self, request, *args, **kwargs):
         """
@@ -51,16 +54,33 @@ class TenantViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+
+@extend_schema_view(
+    create=extend_schema(
+        summary="Change Password",
+        description="Allows authenticated users to change their password. The users must provide the old password and a new password.",
+        request=ChangePasswordSerializer,
+        responses={
+            200: 'Password changed successfully.',
+            400: 'Bad request. Old password is incorrect or new password fails validation.',
+        },
+        tags=['password management'],
+    ),
+)
 class ChangePasswordViewset(viewsets.ViewSet):
     """
-    Viewset for tenants to change their passwords.
+    Viewset for tenants or landlord to change their passwords.
 
-    Only users with the role of tenant can change their passwords.
+    Only users who are authenticated can change their passwords.
     """
 
-    #permission_classes = [IsAuthenticated, IsTenant]
+    permission_classes = [IsAuthenticated]
 
-
+    @extend_schema(
+        description="Change password for authenticated user.",
+        responses={200: 'Password changed successfully.', 400: 'Invalid old password or new password not valid.'},
+        tags=['Password Management']
+    )
     def create(self, request, *args, **kwargs):
         """
         Change the password of the authenticated user.
