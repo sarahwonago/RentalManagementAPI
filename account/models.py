@@ -4,14 +4,15 @@ from django.contrib.auth.models import AbstractUser
 
 class CustomUser(AbstractUser):
     """
-    Custom user model with roles for landlord and tenant.
+    Custom user model with roles for superadmin, landlord and tenant.
 
     Additional fields:
+        role: role of the user
         phone_number: Phone number of the user.
     """
     LANDLORD = "landlord"
     TENANT = "tenant"
-    DEFAULT = "user"
+    SUPERADMIN = "superadmin"
     
     ROLE_CHOICES = (
         ("landlord", "landlord"),
@@ -27,7 +28,7 @@ class CustomUser(AbstractUser):
         choices=ROLE_CHOICES, 
         blank=True,
         null=True,
-        help_text="Role either: 'user','landlord' or 'tenant'."
+        help_text="Role either: 'superadmin','landlord' or 'tenant'."
         )
 
     def __str__(self):
@@ -39,7 +40,7 @@ class Tenant(models.Model):
     Model for linking tenants to landlords.
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    
+
     # a tenant can only be linked to one landlord
     tenant = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
 

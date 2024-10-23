@@ -62,6 +62,7 @@ class TenantViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         # override the tenants to display only tenants for this landlord.
+        # role=tenant, landlord=request.user
         return super().list(request, *args, **kwargs)
 
 

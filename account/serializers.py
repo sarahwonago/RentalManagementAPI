@@ -21,6 +21,7 @@ class LandlordRegistrationSerializer(serializers.ModelSerializer):
             "phone_number",
         ]
 
+
     def create(self, validated_data):
         """
         Create a landlord user.
@@ -98,7 +99,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ChangePasswordSerializer(serializers.Serializer):
     """
-    Serializer for changing the password.
+    Serializer for changing password.
     """
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)

@@ -10,7 +10,7 @@ router.register(r"change-password", ChangePasswordViewset, basename="change-pass
 router.register(r"landlord", LandlordViewSet, basename="landlord")
 
 urlpatterns = [
-    path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("log-in/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 ]
 
