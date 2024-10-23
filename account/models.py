@@ -64,5 +64,9 @@ class Tenant(models.Model):
         related_name="landlordtenants"
         )
     
+    # house one to one
+    # due_date for rent payment on the house
+     
+    
     def __str__(self):
         return f"{self.tenant.username} - Rents at {self.landlord.username}"
