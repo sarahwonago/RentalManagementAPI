@@ -16,7 +16,6 @@ class CustomUser(AbstractUser):
     ROLE_CHOICES = (
         ("landlord", "landlord"),
         ("tenant", "tenant"),
-        ("user", "user"),
         ("superadmin", "superadmin")
         
     )
@@ -26,9 +25,30 @@ class CustomUser(AbstractUser):
     role = models.CharField(
         max_length=10, 
         choices=ROLE_CHOICES, 
-        default="user",
+        blank=True,
+        null=True,
         help_text="Role either: 'user','landlord' or 'tenant'."
         )
 
     def __str__(self):
-        return self.username
+        return f"{self.username}"
+    
+
+class Tenant(models.Model):
+    """
+    Model for linking tenants to landlords.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    
+    # a tenant can only be linked to one landlord
+    tenant = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+
+    # a landlord can be linked to more than one tenant
+    landlord = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="landlordtenants"
+        )
+    
+    def __str__(self):
+        return f"{self.tenant.username} - Rents at {self.landlord.username}"

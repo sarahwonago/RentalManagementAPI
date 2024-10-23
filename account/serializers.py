@@ -12,7 +12,14 @@ class LandlordRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id','username', 'email']
+        fields = [
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "phone_number",
+        ]
 
     def create(self, validated_data):
         """
@@ -21,10 +28,17 @@ class LandlordRegistrationSerializer(serializers.ModelSerializer):
 
         # Default password for landlord users.
         default_password = "Lpassword123!"
-        #password = validated_data.pop('password')
-        user = User.objects.create_user(**validated_data, role=User.LANDLORD)
+
+        # create a landlord user with the validated data and role.
+        user = User.objects.create_user(
+            **validated_data, 
+            role=User.LANDLORD
+            )
+        
+        # sets the default password for landlords and saves the user.
         user.set_password(default_password)
         user.save()
+
         return user
 
 
@@ -36,9 +50,11 @@ class TenantRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
+            "id",
             "username",
             "first_name",
             "last_name",
+            "email",
             "phone_number",
         ]
 

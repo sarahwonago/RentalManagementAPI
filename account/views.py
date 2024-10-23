@@ -9,6 +9,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
 
 from .serializers import (UserSerializer, ChangePasswordSerializer, TenantRegistrationSerializer, LandlordRegistrationSerializer)
 from .permissions import IsLandLord, IsTenant, IsSuperAdmin
+from .models import Tenant
 
 User = get_user_model()
 
@@ -20,7 +21,7 @@ class LandlordViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.filter(role=User.LANDLORD)
     serializer_class = LandlordRegistrationSerializer
-    #permission_classes = [IsAuthenticated, IsSuperAdmin]
+    permission_classes = [IsAuthenticated, IsSuperAdmin]
 
     def create(self, request, *args, **kwargs):
         """
@@ -34,14 +35,14 @@ class LandlordViewSet(viewsets.ModelViewSet):
     
 class TenantViewSet(viewsets.ModelViewSet):
     """
-    Viewset for landlord to manage tenants.
+    Viewset for landlord to manage tenants they have registered.
 
     Only users with the role of landlord can register new tenants.
     """
 
     queryset = User.objects.filter(role=User.TENANT)
     serializer_class = UserSerializer
-    #permission_classes = [IsAuthenticated, IsLandLord]
+    permission_classes = [IsAuthenticated, IsLandLord]
 
     def create(self, request, *args, **kwargs):
         """
@@ -50,9 +51,18 @@ class TenantViewSet(viewsets.ModelViewSet):
 
         serializer = TenantRegistrationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        tenant = serializer.save()
+
+        # link tenant to landlord after saving tenant
+        Tenant.objects.create(
+            tenant=tenant,
+            landlord=request.user
+        )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    def list(self, request, *args, **kwargs):
+        # override the tenants to display only tenants for this landlord.
+        return super().list(request, *args, **kwargs)
 
 
 @extend_schema_view(
