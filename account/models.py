@@ -10,6 +10,7 @@ class CustomUser(AbstractUser):
         role: role of the user
         phone_number: Phone number of the user.
     """
+
     LANDLORD = "landlord"
     TENANT = "tenant"
     SUPERADMIN = "superadmin"
@@ -17,12 +18,20 @@ class CustomUser(AbstractUser):
     ROLE_CHOICES = (
         ("landlord", "landlord"),
         ("tenant", "tenant"),
-        ("superadmin", "superadmin")
-        
+        ("superadmin", "superadmin") 
     )
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    phone_number = models.CharField(max_length=15, blank=True, null=True, unique=True)
+    id = models.UUIDField(
+        primary_key=True, 
+        default=uuid.uuid4, 
+        editable=False
+        )
+    phone_number = models.CharField(
+        max_length=15, 
+        blank=True, 
+        null=True, 
+        unique=True
+        )
     role = models.CharField(
         max_length=10, 
         choices=ROLE_CHOICES, 
@@ -39,7 +48,11 @@ class Tenant(models.Model):
     """
     Model for linking tenants to landlords.
     """
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(
+        primary_key=True, 
+        default=uuid.uuid4, 
+        editable=False
+        )
 
     # a tenant can only be linked to one landlord
     tenant = models.OneToOneField(CustomUser, on_delete=models.CASCADE)

@@ -7,15 +7,20 @@ from django.contrib.auth.hashers import check_password
 
 from drf_spectacular.utils import extend_schema, extend_schema_view
 
-from .serializers import (UserSerializer, ChangePasswordSerializer, TenantRegistrationSerializer, LandlordRegistrationSerializer)
-from .permissions import IsLandLord, IsTenant, IsSuperAdmin
+from .serializers import (
+    UserSerializer,
+    ChangePasswordSerializer, 
+    TenantRegistrationSerializer, 
+    LandlordRegistrationSerializer
+    )
+from .permissions import IsLandLord, IsSuperAdmin
 from .models import Tenant
 
 User = get_user_model()
 
 class LandlordViewSet(viewsets.ModelViewSet):
     """
-    ViewSet for registering1 landlords.
+    ViewSet for registering landlords.
     
     All users registered via this endpoint will have the 'landlord' role.
     """
@@ -30,7 +35,11 @@ class LandlordViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(
+            serializer.data, 
+            status=status.HTTP_201_CREATED
+            )
     
     
 class TenantViewSet(viewsets.ModelViewSet):
@@ -58,11 +67,15 @@ class TenantViewSet(viewsets.ModelViewSet):
             tenant=tenant,
             landlord=request.user
         )
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(
+            serializer.data, 
+            status=status.HTTP_201_CREATED
+            )
 
     def list(self, request, *args, **kwargs):
         # override the tenants to display only tenants for this landlord.
         # role=tenant, landlord=request.user
+        # tenants = Tenant.objects.filter(landlord=request.user)
         return super().list(request, *args, **kwargs)
 
 
@@ -108,4 +121,7 @@ class ChangePasswordViewset(viewsets.ViewSet):
         user.set_password(serializer.validated_data.get("new_password"))
         user.save()
 
-        return Response({"message":"Password changed successfully."}, status=status.HTTP_200_OK)
+        return Response(
+            {"message":"Password changed successfully."}, 
+            status=status.HTTP_200_OK
+            )

@@ -31,21 +31,18 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # Third party apps
-
+    # THIRD-PARTY APPS
     # REST framework
     "rest_framework",
     "rest_framework_simplejwt",
     # documentation
     "drf_spectacular",
 
-    # Custom apps
+    # CUSTOM APPS
     # user management
     "account.apps.AccountConfig",
 
     
-
-
 ]
 
 # Custom user model
@@ -85,7 +82,6 @@ WSGI_APPLICATION = "house_management_api.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
