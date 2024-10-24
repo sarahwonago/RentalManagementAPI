@@ -23,6 +23,6 @@ urlpatterns = [
     path("api/account/", include("account.urls")),
 
     # landlord-tenant management
-    path("api/landlord/", include("landlord.urls")),
+    #path("api/landlord/", include("landlord.urls")),
 
 ]

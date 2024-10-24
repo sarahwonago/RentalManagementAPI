@@ -17,14 +17,16 @@ class Tenant(models.Model):
         editable=False
         )
 
-    # a tenant can only be linked to one landlord
-    tenant = models.OneToOneField(User, on_delete=models.CASCADE)
+    # Tenant must be a user with the role 'tenant'
+    tenant = models.OneToOneField(User, on_delete=models.CASCADE, limit_choices_to={'role': 'tenant'}, related_name='tenant')
 
     # a landlord can be linked to more than one tenant
+    # Landlord must be a user with the role 'landlord'
     landlord = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="landlordtenants"
+        User, 
+        on_delete=models.CASCADE, 
+        limit_choices_to={'role': 'landlord'}, 
+        related_name='tenants'
         )
     
     # house one to one
@@ -33,3 +35,5 @@ class Tenant(models.Model):
     
     def __str__(self):
         return f"{self.tenant.username} - Rents at {self.landlord.username}"
+
+
