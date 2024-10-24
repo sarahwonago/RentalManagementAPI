@@ -41,6 +41,10 @@ INSTALLED_APPS = [
     # CUSTOM APPS
     # user management
     "account.apps.AccountConfig",
+    # landlord-tenant management
+    "landlord.apps.LandlordConfig",
+    # tenant activities
+    "tenant.apps.TenantConfig",
 
     
 ]
@@ -180,3 +184,4 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
+

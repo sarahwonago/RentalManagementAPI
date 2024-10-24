@@ -22,4 +22,7 @@ urlpatterns = [
     # user management
     path("api/account/", include("account.urls")),
 
+    # landlord-tenant management
+    path("api/landlord/", include("landlord.urls")),
+
 ]

@@ -1,3 +1,4 @@
+
 from rest_framework import status, viewsets, filters
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -10,15 +11,14 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .serializers import (
-    UserSerializer,
     ChangePasswordSerializer, 
-    TenantRegistrationSerializer, 
     LandlordRegistrationSerializer
     )
-from .permissions import IsLandLord, IsSuperAdmin
-from .models import Tenant
+from .permissions import IsSuperAdmin
+
 
 User = get_user_model()
+
 
 @extend_schema_view(
     create=extend_schema(
@@ -85,42 +85,6 @@ class LandlordViewSet(viewsets.ModelViewSet):
             )
     
     
-class TenantViewSet(viewsets.ModelViewSet):
-    """
-    Viewset for landlord to manage tenants they have registered.
-
-    Only users with the role of landlord can register new tenants.
-    """
-
-    queryset = User.objects.filter(role=User.TENANT)
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated, IsLandLord]
-
-    def create(self, request, *args, **kwargs):
-        """
-        Creates a tenant user.
-        """
-
-        serializer = TenantRegistrationSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        tenant = serializer.save()
-
-        # link tenant to landlord after saving tenant
-        Tenant.objects.create(
-            tenant=tenant,
-            landlord=request.user
-        )
-        return Response(
-            serializer.data, 
-            status=status.HTTP_201_CREATED
-            )
-
-    def list(self, request, *args, **kwargs):
-        # override the tenants to display only tenants for this landlord.
-        # role=tenant, landlord=request.user
-        # tenants = Tenant.objects.filter(landlord=request.user)
-        return super().list(request, *args, **kwargs)
-
 
 @extend_schema_view(
     create=extend_schema(

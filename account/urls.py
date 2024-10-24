@@ -2,10 +2,9 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from .views import TenantViewSet, ChangePasswordViewset, LandlordViewSet
+from .views import ChangePasswordViewset, LandlordViewSet
 
 router = DefaultRouter()
-router.register(r"tenants", TenantViewSet, basename="tenant")
 router.register(r"change-password", ChangePasswordViewset, basename="change-password")
 router.register(r"landlord", LandlordViewSet, basename="landlord")
 
