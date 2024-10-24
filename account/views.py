@@ -1,4 +1,4 @@
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, filters
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
@@ -6,6 +6,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import check_password
 
 from drf_spectacular.utils import extend_schema, extend_schema_view
+
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .serializers import (
     UserSerializer,
@@ -18,15 +20,56 @@ from .models import Tenant
 
 User = get_user_model()
 
+@extend_schema_view(
+    create=extend_schema(
+        summary="Register a new landlord",
+        description="Create a new user with the 'landlord' role.",
+        responses={201: LandlordRegistrationSerializer},
+        request=LandlordRegistrationSerializer,
+    ),
+    list=extend_schema(
+        summary="List all landlords",
+        description="Retrieve a list of all registered landlords.",
+        responses={200: LandlordRegistrationSerializer(many=True)},
+    ),
+    retrieve=extend_schema(
+        summary="Retrieve a landlord",
+        description="Retrieve details of a specific landlord by UUID.",
+        responses={200: LandlordRegistrationSerializer},
+    ),
+    update=extend_schema(
+        summary="Update a landlord",
+        description="Update details of a specific landlord.",
+        responses={200: LandlordRegistrationSerializer},
+    ),
+    destroy=extend_schema(
+        summary="Delete a landlord",
+        description="Delete a specific landlord.",
+        responses={204: None},
+    ),
+)
 class LandlordViewSet(viewsets.ModelViewSet):
     """
-    ViewSet for registering landlords.
+    ViewSet for managing landlords.
     
     All users registered via this endpoint will have the 'landlord' role.
     """
+
     queryset = User.objects.filter(role=User.LANDLORD)
     serializer_class = LandlordRegistrationSerializer
     permission_classes = [IsAuthenticated, IsSuperAdmin]
+
+    # filtering, searching and ordering
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter
+
+    ]
+    filterset_fields = ['email', 'first_name', 'last_name']
+    search_fields = ['email', 'first_name', 'last_name', 'username']
+    ordering_fields = ['date_joined', 'first_name']
+    ordering = ['date_joined']
 
     def create(self, request, *args, **kwargs):
         """
