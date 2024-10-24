@@ -1,5 +1,4 @@
 # Rental Management API
-
 The Rental Management System is a backend API built with Django and Django Rest Framework (DRF) for managing tenants, houses, rent payments, and arrears. This system is designed to streamline property management, rent tracking, and tenant communication
 
 ## Features
